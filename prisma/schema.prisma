@@ -1,0 +1,47 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Person {
+  id              Int                  @id @default(autoincrement())
+  name            String               @db.VarChar(100)
+  gender          Gender
+  birthdate       DateTime?
+  deathdate       DateTime?
+  birthplace      String?              @db.VarChar(255)
+  deathPlace      String?              @db.VarChar(255)
+  email           String?              @unique @db.VarChar(100)
+  phone           String?              @db.VarChar(20)
+  address         String?              @db.VarChar(255)
+  current_address String?              @db.VarChar(255)
+  image           String?              @db.VarChar(255)
+
+  // Relations
+  fromNode       Relationship[]  @relation("FromNode")
+  toNode         Relationship[]  @relation("ToNode")
+}
+
+
+model Relationship {
+  id       Int    @id @default(autoincrement())
+  type     String @db.VarChar(50)
+  fromNode Int
+  toNode   Int
+
+  // Relations
+  from     Person   @relation("FromNode", fields: [fromNode], references: [id])
+  to       Person   @relation("ToNode", fields: [toNode], references: [id])
+}
+
+enum Gender {
+  male
+  female
+  other
+}
+
+
